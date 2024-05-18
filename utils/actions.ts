@@ -18,7 +18,7 @@ const authenticateAndRedirect = (): string => {
 export const createJobAction = async (
   values: CreateAndEditJobType
 ): Promise<JobType | null> => {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  // await new Promise((resolve) => setTimeout(resolve, 3000)); // DELETE THIS !!!
   const userId = authenticateAndRedirect();
   try {
     createAndEditJobSchema.parse(values);
@@ -32,5 +32,68 @@ export const createJobAction = async (
   } catch (error) {
     console.log(error);
     return null;
+  }
+};
+
+type GetAllJobsActionType = {
+  search?: string;
+  jobStatus?: string;
+  page?: number;
+  limit?: number;
+};
+
+export const getAllJobsAction = async ({
+  search,
+  jobStatus,
+  page = 1,
+  limit = 10,
+}: GetAllJobsActionType): Promise<{
+  jobs: JobType[];
+  count: number;
+  page: number;
+  totalPages: number;
+}> => {
+  const userId = authenticateAndRedirect();
+  try {
+    let whereClause: Prisma.JobWhereInput = {
+      clerkId: userId,
+    };
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        OR: [
+          {
+            position: {
+              contains: search,
+            },
+          },
+          {
+            company: {
+              contains: search,
+            },
+          },
+        ],
+      };
+    }
+
+    if (jobStatus && jobStatus !== "all") {
+      whereClause = {
+        ...whereClause,
+        status: jobStatus,
+      };
+    }
+
+    const jobs: JobType[] = await prisma.job.findMany({
+      where: whereClause,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return { jobs, count: 0, page: 1, totalPages: 0 };
+  } catch (error) {
+    console.log(error);
+    return { jobs: [], count: 0, page: 1, totalPages: 0 };
   }
 };
