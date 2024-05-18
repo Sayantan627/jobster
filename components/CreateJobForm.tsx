@@ -46,12 +46,13 @@ const CreateJobForm = () => {
     onSuccess: (data) => {
       if (!data) {
         toast({
-          description: "there was an error",
+          variant: "destructive",
+          description: "There was an error",
         });
         return;
       }
       toast({
-        description: "job created",
+        description: "Job created",
       });
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
