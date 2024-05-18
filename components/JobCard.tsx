@@ -15,11 +15,6 @@ import JobInfo from "./JobInfo";
 import { Briefcase, CalendarDays, MapPinned, RadioTower } from "lucide-react";
 import { Badge } from "./ui/badge";
 
-// write a function to format job.createdAt in DD/MM/YYYY format
-const formatDate = (date: Date) => {
-  return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-};
-
 const JobCard = ({ job }: { job: JobType }) => {
   const date = new Date(job.createdAt).toLocaleDateString("en-IN");
   return (
@@ -33,7 +28,10 @@ const JobCard = ({ job }: { job: JobType }) => {
         <JobInfo icon={<Briefcase />} text={job.mode} />
         <JobInfo icon={<MapPinned />} text={job.location} />
         <JobInfo icon={<CalendarDays />} text={date} />
-        <Badge className="justify-center w-32">
+        <Badge
+          className="justify-center w-32"
+          variant={job.status === "declined" ? "destructive" : "default"}
+        >
           <JobInfo
             icon={<RadioTower className="w-4 h-4" />}
             text={job.status}
