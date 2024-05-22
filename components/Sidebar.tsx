@@ -4,13 +4,19 @@ import Logo from "../assets/logo.svg";
 import links from "@/utils/links";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   return (
     <aside className="px-8 py-4 h-full bg-muted">
-      <Image src={Logo} alt="logo" className="mx-auto" />
+      <Image
+        src={Logo}
+        alt="logo"
+        className="mx-auto cursor-pointer"
+        onClick={() => router.push("/")}
+      />
       <div className="flex flex-col gap-y-4 mt-20">
         {links.map((link) => (
           <Button
